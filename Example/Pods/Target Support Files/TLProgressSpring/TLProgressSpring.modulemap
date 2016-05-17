@@ -1,6 +1,0 @@
-framework module TLProgressSpring {
-  umbrella header "TLProgressSpring-umbrella.h"
-
-  export *
-  module * { export * }
-}

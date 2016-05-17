@@ -7,12 +7,18 @@
 //
 
 #import "TLAppDelegate.h"
+#import "TLViewController.h"
 
 @implementation TLAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+
+    TLViewController *vc=[[TLViewController alloc]init];
+    UINavigationController *nav=[[UINavigationController alloc]initWithRootViewController:vc];
+    self.window.rootViewController=nav;
+    
+    
     return YES;
 }
 

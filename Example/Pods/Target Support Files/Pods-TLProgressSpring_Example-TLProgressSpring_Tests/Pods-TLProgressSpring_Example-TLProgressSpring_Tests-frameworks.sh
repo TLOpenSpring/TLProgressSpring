@@ -82,12 +82,3 @@ strip_invalid_archs() {
   fi
 }
 
-
-if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "Pods-TLProgressSpring_Example-TLProgressSpring_Tests/TLProgressSpring.framework"
-  install_framework "Pods-TLProgressSpring_Example-TLProgressSpring_Tests/Kiwi.framework"
-fi
-if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "Pods-TLProgressSpring_Example-TLProgressSpring_Tests/TLProgressSpring.framework"
-  install_framework "Pods-TLProgressSpring_Example-TLProgressSpring_Tests/Kiwi.framework"
-fi

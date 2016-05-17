@@ -1,6 +1,0 @@
-#import <UIKit/UIKit.h>
-
-
-FOUNDATION_EXPORT double Pods_TLProgressSpring_Example_TLProgressSpring_TestsVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_TLProgressSpring_Example_TLProgressSpring_TestsVersionString[];
-

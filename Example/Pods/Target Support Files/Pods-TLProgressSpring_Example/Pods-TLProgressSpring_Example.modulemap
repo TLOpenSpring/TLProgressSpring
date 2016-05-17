@@ -1,6 +1,0 @@
-framework module Pods_TLProgressSpring_Example {
-  umbrella header "Pods-TLProgressSpring_Example-umbrella.h"
-
-  export *
-  module * { export * }
-}

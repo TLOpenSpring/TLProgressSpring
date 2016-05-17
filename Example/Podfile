@@ -1,4 +1,4 @@
-use_frameworks!
+#use_frameworks!
 
 target 'TLProgressSpring_Example' do
   pod 'TLProgressSpring', :path => '../'

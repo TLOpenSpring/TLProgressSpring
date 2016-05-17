@@ -1,16 +1,16 @@
 {
   "name": "TLProgressSpring",
-  "version": "0.1.0",
-  "summary": "A short description of TLProgressSpring.",
-  "description": "TODO: Add long description of the pod here.",
-  "homepage": "https://github.com/<GITHUB_USERNAME>/TLProgressSpring",
+  "version": "1.0.0",
+  "summary": "一款进度条工具类，可以在导航栏上显示，也可以弹出一个转轮显示，用户随时可交互",
+  "description": "\"进度条提示框工具，API简单易用，可以在导航栏上显示，也可以弹出一个转轮来显示，支持点击关闭；支持显示百分比，动画效果简单优雅\"",
+  "homepage": "https://github.com/TLOpenSpring/TLProgressSpring",
   "license": "MIT",
   "authors": {
     "Andrew": "anluanlu123@163.com"
   },
   "source": {
-    "git": "https://github.com/<GITHUB_USERNAME>/TLProgressSpring.git",
-    "tag": "0.1.0"
+    "git": "https://github.com/TLOpenSpring/TLProgressSpring.git",
+    "tag": "1.0.0"
   },
   "platforms": {
     "ios": "8.0"

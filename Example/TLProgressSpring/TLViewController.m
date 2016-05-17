@@ -7,9 +7,13 @@
 //
 
 #import "TLViewController.h"
+#import <TLProgressSpring/TLNavBarProgressView.h>
+#import "TLNavController.h"
 
-@interface TLViewController ()
+@interface TLViewController ()<UITableViewDelegate,UITableViewDataSource>
 
+@property (nonatomic,strong)UITableView *tableview;
+@property (nonatomic,strong)NSArray *arrayData;
 @end
 
 @implementation TLViewController
@@ -17,13 +21,59 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    self.view.backgroundColor=[UIColor whiteColor];
+    
+    _arrayData=@[@"导航栏进度条",@"网络请求进度条",@"轮子一直转"];
+    
+    
+    
+    [self initTableview];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+-(void)initTableview{
+    _tableview=[[UITableView alloc]initWithFrame:CGRectMake(0, NAVHEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT-NAVHEIGHT)];
+    _tableview.delegate=self;
+    _tableview.dataSource=self;
+    [self.view addSubview:_tableview];
+
 }
+
+
+
+#pragma mark UITableview Delegate
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return _arrayData.count;
+}
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+   static NSString *cellId=@"cellIdentity";
+    UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:cellId];
+
+    if(!cell){
+        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellId];
+    }
+    cell.textLabel.text=_arrayData[indexPath.row];
+    return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    switch (indexPath.row) {
+        case 0:
+        {
+            TLNavController *navController = [[TLNavController alloc]init];
+            [self.navigationController pushViewController:navController animated:YES];
+        }
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
+
 
 @end
