@@ -10,6 +10,7 @@
 		115143F302E2A6973F011498 /* libPods-TLProgressSpring_Example-TLProgressSpring_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BE9951A4502625CAADF0AF /* libPods-TLProgressSpring_Example-TLProgressSpring_Tests.a */; };
 		49C183981CEAED57005EE829 /* libTLProgressSpring.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C183971CEAED57005EE829 /* libTLProgressSpring.a */; };
 		49C1839C1CEB0486005EE829 /* TLNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C1839B1CEB0486005EE829 /* TLNavController.m */; };
+		49C183B91CEB187F005EE829 /* TLActivityIndicatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C183B81CEB187F005EE829 /* TLActivityIndicatorController.m */; };
 		5A68BDF736630A5FE0708AF4 /* libPods-TLProgressSpring_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4BA90D08CE1BB88267F802 /* libPods-TLProgressSpring_Example.a */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
@@ -44,6 +45,8 @@
 		49C183971CEAED57005EE829 /* libTLProgressSpring.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libTLProgressSpring.a; path = "Pods/../build/Debug-iphoneos/libTLProgressSpring.a"; sourceTree = "<group>"; };
 		49C1839A1CEB0486005EE829 /* TLNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLNavController.h; sourceTree = "<group>"; };
 		49C1839B1CEB0486005EE829 /* TLNavController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLNavController.m; sourceTree = "<group>"; };
+		49C183B71CEB187F005EE829 /* TLActivityIndicatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLActivityIndicatorController.h; sourceTree = "<group>"; };
+		49C183B81CEB187F005EE829 /* TLActivityIndicatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLActivityIndicatorController.m; sourceTree = "<group>"; };
 		4E6795D5544C1AD145743B46 /* Pods-TLProgressSpring_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TLProgressSpring_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-TLProgressSpring_Example/Pods-TLProgressSpring_Example.release.xcconfig"; sourceTree = "<group>"; };
 		59BE9951A4502625CAADF0AF /* libPods-TLProgressSpring_Example-TLProgressSpring_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TLProgressSpring_Example-TLProgressSpring_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58A195388D20070C39A /* TLProgressSpring_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TLProgressSpring_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -104,6 +107,8 @@
 			children = (
 				49C1839A1CEB0486005EE829 /* TLNavController.h */,
 				49C1839B1CEB0486005EE829 /* TLNavController.m */,
+				49C183B71CEB187F005EE829 /* TLActivityIndicatorController.h */,
+				49C183B81CEB187F005EE829 /* TLActivityIndicatorController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -411,6 +416,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F59E195388D20070C39A /* TLAppDelegate.m in Sources */,
+				49C183B91CEB187F005EE829 /* TLActivityIndicatorController.m in Sources */,
 				49C1839C1CEB0486005EE829 /* TLNavController.m in Sources */,
 				6003F5A7195388D20070C39A /* TLViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,

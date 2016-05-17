@@ -9,6 +9,7 @@
 #import "TLViewController.h"
 #import <TLProgressSpring/TLNavBarProgressView.h>
 #import "TLNavController.h"
+#import "TLActivityIndicatorController.h"
 
 @interface TLViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -21,6 +22,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.title=@"进度条的各种效果";
     self.view.backgroundColor=[UIColor whiteColor];
     
     _arrayData=@[@"导航栏进度条",@"网络请求进度条",@"轮子一直转"];
@@ -65,6 +67,12 @@
         {
             TLNavController *navController = [[TLNavController alloc]init];
             [self.navigationController pushViewController:navController animated:YES];
+        }
+            break;
+        case 2:
+        {
+            TLActivityIndicatorController *vc=[[TLActivityIndicatorController alloc]init];
+            [self.navigationController pushViewController:vc animated:YES];
         }
             break;
             
