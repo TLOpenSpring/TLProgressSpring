@@ -4,7 +4,7 @@ target 'TLProgressSpring_Example' do
   pod 'TLProgressSpring', :path => '../'
 
   target 'TLProgressSpring_Tests' do
-    inherit! :search_paths
+    #inherit! :search_paths
 
     pod 'Kiwi'
   end

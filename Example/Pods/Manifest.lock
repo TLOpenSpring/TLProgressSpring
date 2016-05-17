@@ -1,0 +1,17 @@
+PODS:
+  - Kiwi (2.4.0)
+  - TLProgressSpring (0.1.0)
+
+DEPENDENCIES:
+  - Kiwi
+  - TLProgressSpring (from `../`)
+
+EXTERNAL SOURCES:
+  TLProgressSpring:
+    :path: ../
+
+SPEC CHECKSUMS:
+  Kiwi: f49c9d54b28917df5928fe44968a39ed198cb8a8
+  TLProgressSpring: eecd453bb46648df3a3eb4f60e5081a718898d19
+
+COCOAPODS: 0.39.0
