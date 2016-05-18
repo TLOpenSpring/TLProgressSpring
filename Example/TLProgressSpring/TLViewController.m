@@ -11,6 +11,7 @@
 #import "TLNavController.h"
 #import "TLCircleProgressController.h"
 #import "TLActivityIndicatorController.h"
+#import "TLOverlayController.h"
 
 @interface TLViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -29,7 +30,8 @@
     _arrayData=@[@"导航栏进度条",
                  @"网络请求进度条",
                  @"轮子一直转",
-                 @"带有百分比的进度条"];
+                 @"带有百分比的进度条",
+                 @"带遮罩效果的进度条"];
     
     
     
@@ -84,6 +86,13 @@
         {
             TLCircleProgressController *circle=[[TLCircleProgressController alloc]init];
             [self.navigationController pushViewController:circle animated:YES];
+        }
+            break;
+        
+        case 4:
+        {
+            TLOverlayController *overlay=[[TLOverlayController alloc]init];
+            [self.navigationController pushViewController:overlay animated:YES];
         }
             break;
             

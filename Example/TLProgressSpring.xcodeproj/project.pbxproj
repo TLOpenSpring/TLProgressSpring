@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		115143F302E2A6973F011498 /* libPods-TLProgressSpring_Example-TLProgressSpring_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BE9951A4502625CAADF0AF /* libPods-TLProgressSpring_Example-TLProgressSpring_Tests.a */; };
 		49B41CD31CEC3C270040A7A2 /* TLCircleProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B41CD21CEC3C270040A7A2 /* TLCircleProgressController.m */; };
+		49B41CDE1CEC73D50040A7A2 /* TLOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B41CDD1CEC73D50040A7A2 /* TLOverlayController.m */; };
 		49C183981CEAED57005EE829 /* libTLProgressSpring.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C183971CEAED57005EE829 /* libTLProgressSpring.a */; };
 		49C1839C1CEB0486005EE829 /* TLNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C1839B1CEB0486005EE829 /* TLNavController.m */; };
 		49C183B91CEB187F005EE829 /* TLActivityIndicatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C183B81CEB187F005EE829 /* TLActivityIndicatorController.m */; };
@@ -45,6 +46,8 @@
 		3C4BA90D08CE1BB88267F802 /* libPods-TLProgressSpring_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TLProgressSpring_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		49B41CD11CEC3C270040A7A2 /* TLCircleProgressController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLCircleProgressController.h; sourceTree = "<group>"; };
 		49B41CD21CEC3C270040A7A2 /* TLCircleProgressController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLCircleProgressController.m; sourceTree = "<group>"; };
+		49B41CDC1CEC73D50040A7A2 /* TLOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLOverlayController.h; sourceTree = "<group>"; };
+		49B41CDD1CEC73D50040A7A2 /* TLOverlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLOverlayController.m; sourceTree = "<group>"; };
 		49C183971CEAED57005EE829 /* libTLProgressSpring.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libTLProgressSpring.a; path = "Pods/../build/Debug-iphoneos/libTLProgressSpring.a"; sourceTree = "<group>"; };
 		49C1839A1CEB0486005EE829 /* TLNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLNavController.h; sourceTree = "<group>"; };
 		49C1839B1CEB0486005EE829 /* TLNavController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLNavController.m; sourceTree = "<group>"; };
@@ -114,6 +117,8 @@
 				49C183B81CEB187F005EE829 /* TLActivityIndicatorController.m */,
 				49B41CD11CEC3C270040A7A2 /* TLCircleProgressController.h */,
 				49B41CD21CEC3C270040A7A2 /* TLCircleProgressController.m */,
+				49B41CDC1CEC73D50040A7A2 /* TLOverlayController.h */,
+				49B41CDD1CEC73D50040A7A2 /* TLOverlayController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -420,6 +425,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49B41CDE1CEC73D50040A7A2 /* TLOverlayController.m in Sources */,
 				6003F59E195388D20070C39A /* TLAppDelegate.m in Sources */,
 				49C183B91CEB187F005EE829 /* TLActivityIndicatorController.m in Sources */,
 				49B41CD31CEC3C270040A7A2 /* TLCircleProgressController.m in Sources */,
