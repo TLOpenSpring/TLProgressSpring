@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TLStopProtocol.h"
+#import "TLStopButton.h"
 
 @interface TLActivityIndicatorView : UIView <TLStopProtocol>
 
@@ -21,6 +22,8 @@
 @property NSTimeInterval animatorDuration;
 
 @property (nonatomic) BOOL hidesWhenStopped;
+
+@property (nonatomic,strong)TLStopButton *stopButton;
 
 /**
  *  开始动画效果

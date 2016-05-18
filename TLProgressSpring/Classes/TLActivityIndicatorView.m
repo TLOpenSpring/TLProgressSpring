@@ -48,12 +48,23 @@ static NSString *const TLActivityIndicatorViewSpinAnimationKey = @"TLActivityInd
     
     self.shapeLayer = shapeLayer;
     
+    
+    __weak __typeof(self)weakSelf = self;
+    //stopButton
+    _stopButton = [[TLStopButton alloc]initWithCompletionBlock:^(BOOL flag) {
+        [weakSelf stopAnimating];
+    }];
+    [self addSubview:_stopButton];
+    self.mayStop = YES;
+    
+    
     [self tintColorDidChange];
 }
 
 -(void)tintColorDidChange{
     [super tintColorDidChange];
     self.shapeLayer.strokeColor = self.tintColor.CGColor;
+    self.stopButton.tintColor = self.tintColor;
 }
 
 -(void)setLineWidth:(CGFloat)lineWidth{
@@ -67,8 +78,12 @@ static NSString *const TLActivityIndicatorViewSpinAnimationKey = @"TLActivityInd
 #pragma mark StopView implemention
 
 -(void)setMayStop:(BOOL)mayStop{
-
+    self.stopButton.hidden = !mayStop;
 }
+-(BOOL)mayStop{
+    return self.stopButton.hidden;
+}
+
 
 
 
@@ -119,7 +134,6 @@ static NSString *const TLActivityIndicatorViewSpinAnimationKey = @"TLActivityInd
     //当程序进入前台的时候
     [center addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
     
-    
 }
 
 -(void)unregisterForNotification{
@@ -151,6 +165,11 @@ static NSString *const TLActivityIndicatorViewSpinAnimationKey = @"TLActivityInd
     
     self.shapeLayer.frame = frame;
     self.shapeLayer.path = [self layoutPath].CGPath;
+    
+    
+    //stopButton
+    self.stopButton.frame=[self.stopButton frameThatFits:self.bounds];
+    
 }
 /**
  *  获取贝塞尔曲线路径
