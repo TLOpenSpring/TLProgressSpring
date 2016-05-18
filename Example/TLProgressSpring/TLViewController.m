@@ -9,6 +9,7 @@
 #import "TLViewController.h"
 #import <TLProgressSpring/TLNavBarProgressView.h>
 #import "TLNavController.h"
+#import "TLCircleProgressController.h"
 #import "TLActivityIndicatorController.h"
 
 @interface TLViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -25,7 +26,10 @@
     self.title=@"进度条的各种效果";
     self.view.backgroundColor=[UIColor whiteColor];
     
-    _arrayData=@[@"导航栏进度条",@"网络请求进度条",@"轮子一直转"];
+    _arrayData=@[@"导航栏进度条",
+                 @"网络请求进度条",
+                 @"轮子一直转",
+                 @"带有百分比的进度条"];
     
     
     
@@ -73,6 +77,13 @@
         {
             TLActivityIndicatorController *vc=[[TLActivityIndicatorController alloc]init];
             [self.navigationController pushViewController:vc animated:YES];
+        }
+            break;
+            
+        case 3:
+        {
+            TLCircleProgressController *circle=[[TLCircleProgressController alloc]init];
+            [self.navigationController pushViewController:circle animated:YES];
         }
             break;
             
