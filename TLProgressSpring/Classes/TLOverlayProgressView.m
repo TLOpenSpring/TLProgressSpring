@@ -12,6 +12,10 @@
 #import "TLCircleProgressView.h"
 #import "TLActivityIndicatorView.h"
 #import <UIKit/UIKit.h>
+#import "TLStringUtils.h"
+#import "MRBlurView.h"
+
+#import "TLPaddingModel.h"
 
 //ios8之后才支持模糊视图的UIVisualEffectView，所以要判断一下
 #if defined(TL_EnableUIVisualEffectView)
@@ -52,8 +56,6 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
 
 +(instancetype)showOverlayAddTo:(UIView *)view
                        animated:(BOOL)animated{
-
-    
     
     TLOverlayProgressView *overlayView = [self new];
     [view addSubview:overlayView];
@@ -61,14 +63,17 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     return overlayView;
 }
 
+
+
 +(instancetype)showOverlayAddTo:(UIView *)view
                           title:(NSString *)title
                           style:(TLOverlayStyle)style
                        animated:(BOOL)animated
 {
+    
     TLOverlayProgressView *overlayView = [self new];
     overlayView.overlayStyle=style;
-    overlayView.titlelb.text=title;
+    overlayView.titlelb.attributedText=[TLStringUtils getAttibutesForTitle:title color:[UIColor blackColor]];
     [view addSubview:overlayView];
     [overlayView showAnimated:animated];
     return overlayView;
@@ -80,9 +85,10 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
                           style:(TLOverlayStyle)style
                        animated:(BOOL)animated
                       stopBlock:(TLStopOverlayBlock)stopBlock{
+  
     TLOverlayProgressView *overlayView = [self new];
     overlayView.overlayStyle=style;
-    overlayView.titlelb.text=title;
+    overlayView.titlelb.attributedText=[TLStringUtils getAttibutesForTitle:title color:[UIColor blackColor]];
     overlayView.tlStopOverlayBlock = stopBlock;
     [view addSubview:overlayView];
     [overlayView showAnimated:animated];
@@ -167,9 +173,8 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     const CGFloat cornerRadius = TLProgressOverlayViewCornerRadius;
     
     
-    
     //创建一个模糊视图
-    self.blurView = [self createBlueView];
+    self.blurView = [self createBlurView];
     //创建一个容器
     UIView *dialogView = [UIView new];
     [self addSubview:dialogView];
@@ -188,7 +193,7 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     //创建titlelb
     UILabel *titlelb=[[UILabel alloc]init];
     self.titlelb=titlelb;
-    self.titlelb.attributedText=[self getAttibutesForTitle:@"Loading..."];
+    self.titlelb.attributedText=[TLStringUtils getAttibutesForTitle:@"Loading..." color:self.tintColor];
     self.titlelb.textAlignment = NSTextAlignmentCenter;
     self.titlelb.numberOfLines=0;
     self.titlelb.lineBreakMode = NSLineBreakByCharWrapping;
@@ -204,10 +209,10 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
 
 
 #pragma mark create subView
--(UIView *)createBlueView{
+-(UIView *)createBlurView{
     const CGFloat corderRadius = TLProgressOverlayViewCornerRadius;
     //如果当前系统支持模糊API
-    if(__IPHONE_OS_VERSION_MAX_ALLOWED >= 8){
+    if(TL_ISSupportUIEffectView){
         
         UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight];
         //创建一个模糊视图
@@ -215,7 +220,7 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
         
         //创建盲板
         UIView *maskView = [[UIView alloc]init];
-        maskView.backgroundColor = [UIColor whiteColor];
+        maskView.backgroundColor = [UIColor redColor];
         maskView.layer.cornerRadius=corderRadius;
         //设置成自己的模板
         self.blurMaskView=maskView;
@@ -225,6 +230,11 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
         
     }else{
         printf("不支持模糊效果");
+        UIView *blurView = [MRBlurView new];
+        blurView.alpha = 0.98;
+        blurView.layer.cornerRadius = corderRadius;
+        [self addSubview:blurView];
+        return blurView;
     }
 }
 
@@ -234,8 +244,19 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     self.modeView = modelView;
     
     modelView.tintColor = self.tintColor;
+    if([modelView conformsToProtocol:@protocol(TLStopProtocol)] &&
+       [modelView respondsToSelector:@selector(stopButton)]){
+        UIButton *stopButton = [((id<TLStopProtocol>)modelView) stopButton];
+        [stopButton addTarget:self action:@selector(modeViewStopButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
     
     return modelView;
+}
+
+-(void)modeViewStopButtonClick:(UIButton *)btn{
+    if(self.tlStopOverlayBlock){
+        self.tlStopOverlayBlock(self);
+    }
 }
 
 -(void)setModeView:(UIView *)modeView{
@@ -244,12 +265,64 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
 }
 
 
+#pragma mark
+#pragma mark Mode 设置进度条的样式
+
+-(void)setOverlayStyle:(TLOverlayStyle)overlayStyle{
+    [self hideModeView:self.modeView];
+    
+    _overlayStyle = overlayStyle;
+    
+    [self showModeView:[self createModeView]];
+    
+    if(!self.hidden){
+        [self manualLayoutSubviews];
+    }
+}
+-(void)showModeView:(UIView *)view{
+    view.hidden = NO;
+    if ([view respondsToSelector:@selector(startAnimating)]) {
+        [view performSelector:@selector(startAnimating)];
+    }
+}
+
+-(void)hideModeView:(UIView *)view{
+    view.hidden = YES;
+    if ([view respondsToSelector:@selector(stopAnimating)]) {
+        [view performSelector:@selector(stopAnimating)];
+    }
+}
+
+
+
+
 -(UIView *)createViewForStyle:(TLOverlayStyle)style{
     UIView *progress=nil;
     switch (style) {
         case TLOverlayStyleIndeterminate:
         {
            progress= [self createActivityIndicatorView];
+        }
+            break;
+        case TLOverlayStyleIcon:
+            break;
+        case TLOverlayStyleCheckmark:
+            break;
+            
+        case TLOverlayStyleHorizontalBar:
+        {
+            progress = [self createHorizontalProgressView];
+        }
+            break;
+            
+        case TLOverlayStyleIndeterminateSmall:
+        {
+            progress = [self createSmallActivityView];
+        }
+            break;
+        case TLOverlayStyleDeterminateCircular:
+        {
+            progress = [self createCircleProgressView];
         }
             break;
             
@@ -268,6 +341,7 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
         return [self.titlelb.attributedText attributesAtIndex:0 effectiveRange:NULL];
     }
 }
+
 
 
 
@@ -322,6 +396,8 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
 -(void)showAnimated:(BOOL)animated{
     [self showModeView:self.modeView];
     
+    [self manualLayoutSubviews];
+    
     if(animated){
         [self setSubviewTransform:CGAffineTransformMakeScale(1.3, 1.3) alpha:0.5];
         self.backgroundColor = [UIColor clearColor];
@@ -345,22 +421,49 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     [self dismiss:animated completion:nil];
 }
 -(void)dismiss:(BOOL)animated completion:(void (^)())completionBlock{
- 
+ [self hideAnimated:animated completion:^{
+     [self removeFromSuperview];
+     if(completionBlock){
+         completionBlock();
+     }
+ }];
 }
 
--(void)showModeView:(UIView *)view{
-    view.hidden = NO;
-    if ([view respondsToSelector:@selector(startAnimating)]) {
-        [view performSelector:@selector(startAnimating)];
+-(void)hideAnimated:(BOOL)animated{
+    [self hideAnimated:animated completion:nil];
+}
+-(void)hideAnimated:(BOOL)animated completion:(void(^)())completionBlock{
+    [self setSubviewTransform:CGAffineTransformIdentity alpha:1];
+    
+    void (^animBlock)()=^{
+        [self setSubviewTransform:CGAffineTransformMakeScale(0.6, 0.6) alpha:0];
+        self.backgroundColor = [UIColor clearColor];
+    };
+    
+    void (^animCompletionBlock)(BOOL) = ^(BOOL finished){
+        self.hidden =YES;
+        [self hideModeView:self.modeView];
+        
+        if(completionBlock){
+            completionBlock();
+        }
+    };
+    
+    if(animated){
+        [UIView animateWithDuration:0.2
+                              delay:0
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:animBlock
+                         completion:animCompletionBlock];
+    }else{
+        animBlock();
+        animCompletionBlock(YES);
     }
 }
 
--(void)hideModeVie:(UIView *)view{
-    view.hidden = YES;
-    if ([view respondsToSelector:@selector(stopAnimating)]) {
-        [view performSelector:@selector(stopAnimating)];
-    }
-}
+
+
+
 
 
 #pragma mark - Helper to create UIMotionEffects
@@ -444,17 +547,132 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     self.modeView.tintColor = self.tintColor;
 }
 
-#pragma
-#pragma mark getAttibutesForTitle
 
--(NSAttributedString *)getAttibutesForTitle:(NSString *)title{
+
+#pragma mark
+#pragma mark Layout 手动重新布局
+/**
+ *  不要覆盖layoutSubviews，因为会引起动画效果的问题 在隐藏的时候
+ */
+-(void)manualLayoutSubviews{
     
-    NSDictionary *dict=@{NSForegroundColorAttributeName:[UIColor blackColor],
-                         NSFontAttributeName:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
-                         NSKernAttributeName:@(10)};
+    CGRect bounds = self.superview.bounds;
+    UIEdgeInsets insets = UIEdgeInsetsZero;
     
-    NSAttributedString *attriString=[[NSAttributedString alloc] initWithString:title attributes:dict];
-    return attriString;
+   
+    if([self.superview isKindOfClass:[UIScrollView class]]){
+        UIScrollView *scrollView = (UIScrollView*)self.superview;
+        insets = scrollView.contentInset;
+    }
+    
+    self.center = CGPointMake((bounds.size.width - insets.left - insets.right) / 2.0f,
+                              (bounds.size.height - insets.top - insets.bottom) / 2.0f);
+    
+    
+    if([self.superview isKindOfClass:[UIWindow class]] && UIInterfaceOrientationIsLandscape(UIApplication.sharedApplication.statusBarOrientation)){
+       self.bounds  = (CGRect){CGPointZero, {bounds.size.height, bounds.size.width}};
+    }else{
+       self.bounds = (CGRect){CGPointZero, bounds.size};
+    }
+
+    
+    TLPaddingModel *paddingModel=[[TLPaddingModel alloc]initWithDialogPadding:15 modePadding:30 dialogMargin:10 dialogMinWidth:150];
+    
+    
+    const BOOL hasSmallIndicator = self.overlayStyle  == TLOverlayStyleIndeterminateSmall;
+    
+    const BOOL isTextNonEmpty = self.titlelb.text.length > 0;
+    
+    CGFloat dialogWidth = hasSmallIndicator?CGRectGetWidth(bounds) - paddingModel.dialogMargin*2:paddingModel.dialogMinWidth;
+    if(self.overlayStyle == TLOverlayStyleCustom){
+        dialogWidth = self.modeView.frame.size.width + 2*paddingModel.modePadding;
+    }
+    paddingModel.dialogWidth=dialogWidth;
+    
+    
+    CGFloat y = (isTextNonEmpty || hasSmallIndicator)?7:paddingModel.modePadding;
+    
+    CGSize modeViewSize;
+    if(hasSmallIndicator){
+        modeViewSize = CGSizeMake(20, 20);
+    }
+    
+    if(!self.titlelb.hidden && isTextNonEmpty){
+        const CGFloat innerViewWidth = dialogWidth - 2*paddingModel.dialogPadding;
+    }
+    
+    
+    //设置Dialog的坐标frame
+    [self layoutDialog:paddingModel];
+    
+    //设置modeView的frame
+    if (!hasSmallIndicator){
+        [self laytoutModeView:paddingModel];
+    }
+    
+    
+    
+    if(!CGRectEqualToRect(self.blurView.frame, self.dialogView.frame)){
+        self.blurView.frame = self.dialogView.frame;
+        
+        #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 8
+        self.blurMaskView.frame = self.dialogView.frame;
+        self.blurView.maskView = self.blurMaskView;
+         #endif
+    }
+    
+    //设置titleLb的layout
+    if(isTextNonEmpty){
+        [self layoutTitleLb];
+    }
+}
+
+/**
+ *  设置弹出的对话框的layout
+ *
+ *  @param paddingModel
+ */
+-(void)layoutDialog:(TLPaddingModel*)paddingModel{
+    CGRect innerRect,outerRect;
+    innerRect.size = CGSizeMake(paddingModel.dialogWidth, paddingModel.dialogWidth);
+    outerRect=self.bounds;
+    
+    innerRect.origin.x = outerRect.origin.x + (outerRect.size.width  - innerRect.size.width)  / 2.0f;
+    innerRect.origin.y = outerRect.origin.y + (outerRect.size.height - innerRect.size.height) / 2.0f;
+    self.dialogView.frame = innerRect;
+}
+
+/**
+ *  设置进度条标题的layout
+ */
+-(void)layoutTitleLb{
+    self.modeView.frame = CGRectOffset(self.modeView.frame, 0, 10);
+    self.titlelb.frame=CGRectMake(0, 10, self.dialogView.frame.size.width, 20);
+}
+/**
+ *  设置进度条的布局
+ */
+-(void)laytoutModeView:(TLPaddingModel*)paddingModel {
+    
+    BOOL isTextNonEmpty = self.titlelb.text.length > 0;
+    
+    const CGFloat innerViewWidth = paddingModel.dialogWidth - 2*paddingModel.modePadding;
+    CGFloat  y = paddingModel.dialogWidth/2-innerViewWidth/2;
+    CGRect modeViewFrame;
+    CGFloat paddingBottom = 0;
+    if(self.overlayStyle != TLOverlayStyleHorizontalBar){
+        if(self.overlayStyle == TLOverlayStyleCustom){
+            modeViewFrame = CGRectMake(paddingModel.modePadding, y, innerViewWidth, self.modeView.frame.size.height);
+        }else{
+            modeViewFrame = CGRectMake(paddingModel.modePadding, y, innerViewWidth, innerViewWidth);
+        }
+        paddingBottom = isTextNonEmpty ? 20:paddingModel.modePadding;
+    }else{
+        modeViewFrame = CGRectMake(10, y, paddingModel.dialogWidth-20, 5);
+        paddingBottom=15;
+    }
+    
+    self.modeView.frame=modeViewFrame;
 }
 
 @end

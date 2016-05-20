@@ -22,7 +22,12 @@
     [super viewDidLoad];
     
     
-    _arrayData=@[@"显示普通转轮"];
+    _arrayData=@[@"显示普通转轮",
+                 @"TLOverlayStyleIcon",
+                 @"TLOverlayStyleCheckmark",
+                 @"TLOverlayStyleHorizontalBar",
+                 @"TLOverlayStyleIndeterminateSmall",
+                 @"TLOverlayStyleDeterminateCircular"];
     [self initTable];
     
 }
@@ -58,21 +63,51 @@
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+  
+    TLOverlayStyle style;
     switch (indexPath.row) {
         case 0:
         {
-            [self onShowIndeterminateProgressView:nil];
+            style=TLOverlayStyleIndeterminate;
         }
             break;
             
+        case 1:
+            style=TLOverlayStyleIcon;
+            break;
+        case 2:
+            style=TLOverlayStyleCheckmark;
+            break;
+        case 3:
+            style=TLOverlayStyleHorizontalBar;
+            break;
+
+        case 4:
+            style=TLOverlayStyleIndeterminateSmall;
+            break;
+
+        case 5:
+            style=TLOverlayStyleDeterminateCircular;
+            break;
+
         default:
+        {
+            style=TLOverlayStyleIndeterminate;
+        }
             break;
     }
+    
+    [self onShowProgress4:style];
 }
 
 #pragma mark 工厂方法
 - (void)onShowIndeterminateProgressView:(id)sender {
-    TLOverlayProgressView *progressView = [[TLOverlayProgressView alloc]initWithFrame:CGRectMake(100, 100, 100, 100)];;
+    TLOverlayProgressView *progressView = [TLOverlayProgressView showOverlayAddTo:self.view
+                                                                             title:@"加载中..."
+                                                                             style:TLOverlayStyleIndeterminate animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+                                                                                 [progressView hideAnimated:YES];
+                                                                             }];
     [self.view addSubview:progressView];
     [progressView showAnimated:YES];
     
@@ -80,6 +115,35 @@
         [progressView dismiss:YES];
     } afterDelay:2.0];
 }
+
+
+-(void)onShowProgress2{
+
+}
+-(void)onShowProgress3{
+    
+}
+-(void)onShowProgress4:(TLOverlayStyle )style{
+    TLOverlayProgressView *progress = [TLOverlayProgressView showOverlayAddTo:self.view
+                                                                        title:@""
+                                                                        style:style
+                                                                     animated:YES];
+    [self performBlock:^{
+        [progress dismiss:YES];
+    } afterDelay:2.0];
+    
+    
+}
+-(void)onShowProgress5{
+    
+}
+-(void)onShowProgress6{
+    
+}
+-(void)onShowProgress7{
+    
+}
+
 
 - (void)performBlock:(void(^)())block afterDelay:(NSTimeInterval)delay {
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC));
