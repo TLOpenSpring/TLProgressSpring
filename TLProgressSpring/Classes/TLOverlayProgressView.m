@@ -45,6 +45,7 @@ static const CGFloat TLProgressOverlayViewMotionEffectExtent = 10;
 @property (nonatomic,strong)UIView *blurMaskView;
 
 @property (nonatomic,strong)NSDictionary *savedAttributes;
+@property (nonatomic,strong)NSNumberFormatter *numberFormatter;
 @end
 
 @implementation TLOverlayProgressView
@@ -53,6 +54,8 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
 
 #pragma mark
 #pragma mark -- 类方法
+
+
 
 +(instancetype)showOverlayAddTo:(UIView *)view
                        animated:(BOOL)animated{
@@ -200,12 +203,21 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     [dialogView addSubview:self.titlelb];
     
     
+    [self createNumberFormatter];
+    
     //创建模型View
     [self createModeView];
  
     [self tintColorDidChange];
 }
 
+
+-(void)createNumberFormatter{
+    NSNumberFormatter *numberFormatter= [NSNumberFormatter new];
+    self.numberFormatter = numberFormatter;
+    numberFormatter.numberStyle = NSNumberFormatterPercentStyle;
+    numberFormatter.locale = NSLocale.currentLocale;
+}
 
 
 #pragma mark create subView
@@ -342,6 +354,38 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     }
 }
 
+
+#pragma mark
+#pragma mark 设置progress的值
+-(void)setProgress:(float)progress{
+    [self setProgress:progress animated:NO];
+}
+
+-(void)setProgress:(float)progress animated:(BOOL)animated{
+    NSParameterAssert(progress>=0 && progress <=1);
+    _progress = progress;
+    
+    if(self.isShowPercent){
+        self.titlelb.text=[self.numberFormatter stringFromNumber:@(progress)];
+    }
+    if(_progress==1){
+      self.titlelb.text=@"";
+    }
+    
+    [self applyProgressAnimated:animated];
+}
+
+-(void)applyProgressAnimated:(BOOL)animated{
+    if([self.modeView respondsToSelector:@selector(setProgress:animated:)]){
+        [((id)self.modeView) setProgress:self.progress animated:animated];
+    }else if([self.modeView respondsToSelector:@selector(setProgress:)]){
+        [((id)self.modeView) setProgress:self.progress];
+    }else{
+        
+        NSAssert(self.overlayStyle == TLOverlayStyleDeterminateCircular ||
+                 self.overlayStyle == TLOverlayStyleHorizontalBar,@"overlayStyle必须支持%@,不然程序崩溃",NSStringFromSelector(@selector(setProgress:animated:)));
+    }
+}
 
 
 
@@ -558,7 +602,6 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     
     CGRect bounds = self.superview.bounds;
     UIEdgeInsets insets = UIEdgeInsetsZero;
-    
    
     if([self.superview isKindOfClass:[UIScrollView class]]){
         UIScrollView *scrollView = (UIScrollView*)self.superview;
@@ -578,38 +621,24 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     
     TLPaddingModel *paddingModel=[[TLPaddingModel alloc]initWithDialogPadding:15 modePadding:30 dialogMargin:10 dialogMinWidth:150];
     
-    
     const BOOL hasSmallIndicator = self.overlayStyle  == TLOverlayStyleIndeterminateSmall;
     
     const BOOL isTextNonEmpty = self.titlelb.text.length > 0;
     
     CGFloat dialogWidth = hasSmallIndicator?CGRectGetWidth(bounds) - paddingModel.dialogMargin*2:paddingModel.dialogMinWidth;
-    if(self.overlayStyle == TLOverlayStyleCustom){
-        dialogWidth = self.modeView.frame.size.width + 2*paddingModel.modePadding;
-    }
     paddingModel.dialogWidth=dialogWidth;
     
     
-    CGFloat y = (isTextNonEmpty || hasSmallIndicator)?7:paddingModel.modePadding;
-    
-    CGSize modeViewSize;
     if(hasSmallIndicator){
-        modeViewSize = CGSizeMake(20, 20);
+        [self layoutSmallIndicator:paddingModel];
+    }else{
+        //设置modeView的frame
+        [self laytoutModeView:paddingModel];
     }
-    
-    if(!self.titlelb.hidden && isTextNonEmpty){
-        const CGFloat innerViewWidth = dialogWidth - 2*paddingModel.dialogPadding;
-    }
-    
-    
     //设置Dialog的坐标frame
     [self layoutDialog:paddingModel];
     
-    //设置modeView的frame
-    if (!hasSmallIndicator){
-        [self laytoutModeView:paddingModel];
-    }
-    
+    [self layoutStyleCustom:paddingModel];
     
     
     if(!CGRectEqualToRect(self.blurView.frame, self.dialogView.frame)){
@@ -622,9 +651,11 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     }
     
     //设置titleLb的layout
-    if(isTextNonEmpty){
+     if(isTextNonEmpty){
         [self layoutTitleLb];
-    }
+     }else if(self.isShowPercent){
+        [self layoutTitleLb];
+     }
 }
 
 /**
@@ -636,6 +667,10 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     CGRect innerRect,outerRect;
     innerRect.size = CGSizeMake(paddingModel.dialogWidth, paddingModel.dialogWidth);
     outerRect=self.bounds;
+    
+    if(self.overlayStyle == TLOverlayStyleHorizontalBar){
+        innerRect.size=CGSizeMake(paddingModel.dialogWidth, 60);
+    }
     
     innerRect.origin.x = outerRect.origin.x + (outerRect.size.width  - innerRect.size.width)  / 2.0f;
     innerRect.origin.y = outerRect.origin.y + (outerRect.size.height - innerRect.size.height) / 2.0f;
@@ -673,6 +708,19 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     }
     
     self.modeView.frame=modeViewFrame;
+}
+
+-(void)layoutStyleCustom:(TLPaddingModel *)paddingModel{
+      CGFloat  dialogWidth = self.modeView.frame.size.width + 2*paddingModel.modePadding;
+    
+}
+
+-(void)layoutSmallIndicator:(TLPaddingModel *)paddingModel{
+    modeViewFrame = CGRectMake(10, y, paddingModel.dialogWidth-20, 5);
+    paddingBottom=15;
+}
+
+self.modeView.frame=modeViewFrame;
 }
 
 @end

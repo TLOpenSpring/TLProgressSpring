@@ -27,7 +27,8 @@
                  @"TLOverlayStyleCheckmark",
                  @"TLOverlayStyleHorizontalBar",
                  @"TLOverlayStyleIndeterminateSmall",
-                 @"TLOverlayStyleDeterminateCircular"];
+                 @"TLOverlayStyleDeterminateCircular",
+                  @"带有文字的转轮"];
     [self initTable];
     
 }
@@ -70,35 +71,44 @@
         case 0:
         {
             style=TLOverlayStyleIndeterminate;
+            [self onShowProgress4:style];
         }
             break;
             
         case 1:
             style=TLOverlayStyleIcon;
+             [self onShowProgress4:style];
             break;
         case 2:
             style=TLOverlayStyleCheckmark;
             break;
         case 3:
             style=TLOverlayStyleHorizontalBar;
+            [self onShowProgress2];
             break;
 
         case 4:
             style=TLOverlayStyleIndeterminateSmall;
+             [self onShowProgress4:style];
             break;
 
         case 5:
             style=TLOverlayStyleDeterminateCircular;
+              [self onShowProgress5];
+            break;
+        case 6:
+            [self onShowProgress6];
             break;
 
         default:
         {
             style=TLOverlayStyleIndeterminate;
+             [self onShowProgress4:style];
         }
             break;
     }
     
-    [self onShowProgress4:style];
+   
 }
 
 #pragma mark 工厂方法
@@ -118,36 +128,99 @@
 
 
 -(void)onShowProgress2{
-
-}
--(void)onShowProgress3{
+    TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
+                                              showOverlayAddTo:self.view
+                                              title:@""
+                                              style:TLOverlayStyleHorizontalBar
+                                              animated:YES];
+    overLayProgress.isShowPercent=YES;
+    [overLayProgress showAnimated:YES];
+    [self simulateProgress:overLayProgress];
+    
+    [self performBlock:^{
+        [overLayProgress dismiss:YES];
+    } afterDelay:2.0];
+    
+    
     
 }
+-(void)onShowProgress6{
+    TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
+                                              showOverlayAddTo:self.view
+                                              title:@"Loading..."
+                                              style:TLOverlayStyleIndeterminate
+                                              animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+                                                  [progressView hideAnimated:YES];
+                                              }];
+    [overLayProgress showAnimated:YES];
+    
+    
+}
+
+
 -(void)onShowProgress4:(TLOverlayStyle )style{
     TLOverlayProgressView *progress = [TLOverlayProgressView showOverlayAddTo:self.view
                                                                         title:@""
                                                                         style:style
-                                                                     animated:YES];
+                                                                     animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+                                                                         
+                                                                         [progressView dismiss:YES];
+                                                                     }];
     [self performBlock:^{
         [progress dismiss:YES];
     } afterDelay:2.0];
-    
-    
 }
+
 -(void)onShowProgress5{
+    TLOverlayProgressView *overlayProgressView =[TLOverlayProgressView showOverlayAddTo:[self rootView] title:@"" style:TLOverlayStyleDeterminateCircular animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+        [progressView hideAnimated:YES];
+    }];
+    [overlayProgressView showAnimated:YES];
+    
+    [self simulateProgress:overlayProgressView];
+    
     
 }
--(void)onShowProgress6{
-    
-}
--(void)onShowProgress7{
-    
-}
+
 
 
 - (void)performBlock:(void(^)())block afterDelay:(NSTimeInterval)delay {
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), block);
+}
+
+-(void)simulateProgress:(TLOverlayProgressView *)progressView{
+    
+    [progressView showAnimated:YES];
+    
+    [self performBlock:^{
+        [progressView setProgress:0.1 animated:YES];
+        [self performBlock:^{
+            [progressView setProgress:0.3 animated:YES];
+            [self performBlock:^{
+                [progressView setProgress:0.5 animated:YES];
+                [self performBlock:^{
+                    [progressView setProgress:0.7 animated:YES];
+                    [self performBlock:^{
+                        [progressView setProgress:0.8 animated:YES];
+                        [self performBlock:^{
+                            [progressView setProgress:0.9 animated:YES];
+                            [self performBlock:^{
+                                [progressView setProgress:1.0 animated:YES];
+                                [self performBlock:^{
+                                    [progressView hideAnimated:YES];
+                                } afterDelay:0.1];
+                            } afterDelay:0.4];
+                            
+                        } afterDelay:0.5];
+                        
+                    } afterDelay:0.5];
+                    
+                } afterDelay:0.5];
+                
+            } afterDelay:0.5];
+        } afterDelay:0.5];
+    } afterDelay:0.5];
 }
 
 @end

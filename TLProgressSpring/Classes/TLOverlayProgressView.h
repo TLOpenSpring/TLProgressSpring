@@ -162,6 +162,11 @@ typedef  NS_ENUM(NSInteger,TLOverlayStyle){
 @property (nonatomic,strong)NSString *titlelbText;
 @property (nonatomic,strong)UILabel *titlelb;
 
+/**
+ *  如果是UIProgress进度条，设置显示百分比
+ */
+@property BOOL isShowPercent;
+
 @property (nonatomic,strong)TLStopOverlayBlock tlStopOverlayBlock;
 
 /**
