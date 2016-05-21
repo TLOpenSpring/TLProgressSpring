@@ -28,9 +28,9 @@
                  @"TLOverlayStyleHorizontalBar",
                  @"TLOverlayStyleIndeterminateSmall",
                  @"TLOverlayStyleDeterminateCircular",
-                  @"带有文字的转轮"];
+                 @"带有文字的转轮",
+                 @"TLOverlayStyleSystemUIActivity"];
     [self initTable];
-    
 }
 
 -(UIView *)rootView{
@@ -71,7 +71,7 @@
         case 0:
         {
             style=TLOverlayStyleIndeterminate;
-            [self onShowProgress4:style];
+            [self onShowProgress1];
         }
             break;
             
@@ -84,7 +84,7 @@
             break;
         case 3:
             style=TLOverlayStyleHorizontalBar;
-            [self onShowProgress2];
+            [self onShowProgress3];
             break;
 
         case 4:
@@ -98,6 +98,10 @@
             break;
         case 6:
             [self onShowProgress6];
+            break;
+        case 7:
+            style=TLOverlayStyleSystemUIActivity;
+            [self onShowProgress7];
             break;
 
         default:
@@ -127,6 +131,21 @@
 }
 
 
+-(void)onShowProgress1{
+    TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
+                                              showOverlayAddTo:self.view
+                                              title:nil
+                                              style:TLOverlayStyleIndeterminate
+                                              animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+                                                  
+                                                  [progressView hideAnimated:YES];
+                                              }];
+    [overLayProgress showAnimated:YES];
+    [self performBlock:^{
+        [overLayProgress dismiss:YES];
+    } afterDelay:2.0];
+}
+
 -(void)onShowProgress2{
     TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
                                               showOverlayAddTo:self.view
@@ -137,13 +156,22 @@
     [overLayProgress showAnimated:YES];
     [self simulateProgress:overLayProgress];
     
-    [self performBlock:^{
-        [overLayProgress dismiss:YES];
-    } afterDelay:2.0];
-    
+   
+}
+
+-(void)onShowProgress3{
+    TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
+                                              showOverlayAddTo:self.view
+                                              title:@"loading"
+                                              style:TLOverlayStyleHorizontalBar
+                                              animated:YES];
+    overLayProgress.isShowPercent=YES;
+    [overLayProgress showAnimated:YES];
+    [self simulateProgress:overLayProgress];
     
     
 }
+
 -(void)onShowProgress6{
     TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
                                               showOverlayAddTo:self.view
@@ -153,14 +181,29 @@
                                                   [progressView hideAnimated:YES];
                                               }];
     [overLayProgress showAnimated:YES];
+    [self performBlock:^{
+        [overLayProgress dismiss:YES];
+    } afterDelay:2.0];
     
-    
+}
+-(void)onShowProgress7{
+    TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
+                                              showOverlayAddTo:self.view
+                                              title:@"Loading..."
+                                              style:TLOverlayStyleSystemUIActivity
+                                              animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+                                                  [progressView hideAnimated:YES];
+                                              }];
+    [overLayProgress showAnimated:YES];
+    [self performBlock:^{
+        [overLayProgress dismiss:YES];
+    } afterDelay:2.0];
 }
 
 
 -(void)onShowProgress4:(TLOverlayStyle )style{
     TLOverlayProgressView *progress = [TLOverlayProgressView showOverlayAddTo:self.view
-                                                                        title:@""
+                                                                        title:@"loading..."
                                                                         style:style
                                                                      animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
                                                                          
@@ -178,8 +221,6 @@
     [overlayProgressView showAnimated:YES];
     
     [self simulateProgress:overlayProgressView];
-    
-    
 }
 
 

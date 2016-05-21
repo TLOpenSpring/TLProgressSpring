@@ -12,7 +12,8 @@
 -(id)initWithDialogPadding:(CGFloat)dialogPadding
                modePadding:(CGFloat)modePadding
               dialogMargin:(CGFloat)dialogMargin
-            dialogMinWidth:(CGFloat)dialogMinWidth{
+            dialogMinWidth:(CGFloat)dialogMinWidth
+               {
     self=[super init];
     if(self){
         _dialogMargin=dialogMargin;

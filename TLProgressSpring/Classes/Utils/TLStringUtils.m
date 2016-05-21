@@ -30,6 +30,10 @@
 
 -(NSAttributedString *)getAttibutesForTitle:(NSString *)title
                                       color:(UIColor *)tintColor{
+    
+    if(title==nil)
+        title=@"";
+    
     UIColor *color=tintColor;
     UIFont *font=[UIFont systemFontOfSize:15];
     

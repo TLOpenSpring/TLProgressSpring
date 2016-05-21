@@ -17,6 +17,10 @@
 
 #import "TLPaddingModel.h"
 
+#define TLSmallIndicatorHeight 35
+#define TLTitleLbHeight 20
+#define TLHorizontalBarHeight 60
+
 //ios8之后才支持模糊视图的UIVisualEffectView，所以要判断一下
 #if defined(TL_EnableUIVisualEffectView)
     #define TL_UIEffectViewIsEnabled 1
@@ -266,6 +270,7 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
 }
 
 -(void)modeViewStopButtonClick:(UIButton *)btn{
+    
     if(self.tlStopOverlayBlock){
         self.tlStopOverlayBlock(self);
     }
@@ -320,16 +325,19 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
             break;
         case TLOverlayStyleCheckmark:
             break;
-            
         case TLOverlayStyleHorizontalBar:
         {
             progress = [self createHorizontalProgressView];
         }
             break;
-            
         case TLOverlayStyleIndeterminateSmall:
         {
             progress = [self createSmallActivityView];
+        }
+            break;
+        case TLOverlayStyleSystemUIActivity:
+        {
+            progress = [self createSmallDefaultActivityIndicatorView];
         }
             break;
         case TLOverlayStyleDeterminateCircular:
@@ -341,7 +349,6 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
         default:
             break;
     }
-    
     return progress;
 }
 
@@ -353,8 +360,6 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
         return [self.titlelb.attributedText attributesAtIndex:0 effectiveRange:NULL];
     }
 }
-
-
 #pragma mark
 #pragma mark 设置progress的值
 -(void)setProgress:(float)progress{
@@ -505,11 +510,6 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     }
 }
 
-
-
-
-
-
 #pragma mark - Helper to create UIMotionEffects
 
 -(UIInterpolatingMotionEffect *)motionEffectWithKeyPath:(NSString *)keyPath
@@ -546,7 +546,7 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
 }
 
 -(TLActivityIndicatorView *)createSmallActivityView{
-    TLActivityIndicatorView *smallActivityView = [[TLActivityIndicatorView alloc]init];
+    TLActivityIndicatorView *smallActivityView = [[TLActivityIndicatorView alloc]initWithFrame:CGRectMake(100, 100, 40, 40)];
     smallActivityView.hidesWhenStopped = YES;
     return smallActivityView;
 }
@@ -554,7 +554,7 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
 /**
  *  创建系统默认的转轮
  *
- *  @return <#return value description#>
+ *  @return
  */
 -(UIActivityIndicatorView *)createSmallDefaultActivityIndicatorView{
     UIActivityIndicatorView *activityView = [UIActivityIndicatorView new];
@@ -619,108 +619,138 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     }
 
     
-    TLPaddingModel *paddingModel=[[TLPaddingModel alloc]initWithDialogPadding:15 modePadding:30 dialogMargin:10 dialogMinWidth:150];
+    TLPaddingModel *paddingModel=[[TLPaddingModel alloc]initWithDialogPadding:15
+                                                                  modePadding:30
+                                                                 dialogMargin:10
+                                                               dialogMinWidth:150
+                                                                ];
     
-    const BOOL hasSmallIndicator = self.overlayStyle  == TLOverlayStyleIndeterminateSmall;
-    
-    const BOOL isTextNonEmpty = self.titlelb.text.length > 0;
-    
-    CGFloat dialogWidth = hasSmallIndicator?CGRectGetWidth(bounds) - paddingModel.dialogMargin*2:paddingModel.dialogMinWidth;
-    paddingModel.dialogWidth=dialogWidth;
-    
-    
-    if(hasSmallIndicator){
+    if(self.overlayStyle == TLOverlayStyleIndeterminateSmall){
         [self layoutSmallIndicator:paddingModel];
-    }else{
-        //设置modeView的frame
-        [self laytoutModeView:paddingModel];
+    }else if(self.overlayStyle == TLOverlayStyleIndeterminate){
+        [self LayoutIndeterminate:paddingModel];
+    }else if(self.overlayStyle == TLOverlayStyleHorizontalBar){
+        [self layoutHorizontalBar:paddingModel];
+    }else if(self.overlayStyle == TLOverlayStyleDeterminateCircular){
+        [self layoutDeterminateCircular:paddingModel];
+    }else if(self.overlayStyle == TLOverlayStyleSystemUIActivity){
+        [self layoutSmallIndicator:paddingModel];
     }
-    //设置Dialog的坐标frame
-    [self layoutDialog:paddingModel];
-    
-    [self layoutStyleCustom:paddingModel];
-    
+    else if(self.overlayStyle == TLOverlayStyleCustom){
+        [self layoutStyleCustom:paddingModel];
+    }
     
     if(!CGRectEqualToRect(self.blurView.frame, self.dialogView.frame)){
         self.blurView.frame = self.dialogView.frame;
-        
         #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 8
         self.blurMaskView.frame = self.dialogView.frame;
         self.blurView.maskView = self.blurMaskView;
          #endif
     }
-    
-    //设置titleLb的layout
-     if(isTextNonEmpty){
-        [self layoutTitleLb];
-     }else if(self.isShowPercent){
-        [self layoutTitleLb];
-     }
 }
 
-/**
- *  设置弹出的对话框的layout
- *
- *  @param paddingModel
- */
--(void)layoutDialog:(TLPaddingModel*)paddingModel{
-    CGRect innerRect,outerRect;
-    innerRect.size = CGSizeMake(paddingModel.dialogWidth, paddingModel.dialogWidth);
-    outerRect=self.bounds;
-    
-    if(self.overlayStyle == TLOverlayStyleHorizontalBar){
-        innerRect.size=CGSizeMake(paddingModel.dialogWidth, 60);
-    }
-    
-    innerRect.origin.x = outerRect.origin.x + (outerRect.size.width  - innerRect.size.width)  / 2.0f;
-    innerRect.origin.y = outerRect.origin.y + (outerRect.size.height - innerRect.size.height) / 2.0f;
-    self.dialogView.frame = innerRect;
-}
 
-/**
- *  设置进度条标题的layout
- */
--(void)layoutTitleLb{
-    self.modeView.frame = CGRectOffset(self.modeView.frame, 0, 10);
-    self.titlelb.frame=CGRectMake(0, 10, self.dialogView.frame.size.width, 20);
-}
-/**
- *  设置进度条的布局
- */
--(void)laytoutModeView:(TLPaddingModel*)paddingModel {
-    
-    BOOL isTextNonEmpty = self.titlelb.text.length > 0;
-    
-    const CGFloat innerViewWidth = paddingModel.dialogWidth - 2*paddingModel.modePadding;
-    CGFloat  y = paddingModel.dialogWidth/2-innerViewWidth/2;
-    CGRect modeViewFrame;
-    CGFloat paddingBottom = 0;
-    if(self.overlayStyle != TLOverlayStyleHorizontalBar){
-        if(self.overlayStyle == TLOverlayStyleCustom){
-            modeViewFrame = CGRectMake(paddingModel.modePadding, y, innerViewWidth, self.modeView.frame.size.height);
-        }else{
-            modeViewFrame = CGRectMake(paddingModel.modePadding, y, innerViewWidth, innerViewWidth);
-        }
-        paddingBottom = isTextNonEmpty ? 20:paddingModel.modePadding;
-    }else{
-        modeViewFrame = CGRectMake(10, y, paddingModel.dialogWidth-20, 5);
-        paddingBottom=15;
-    }
-    
-    self.modeView.frame=modeViewFrame;
-}
+
+
 
 -(void)layoutStyleCustom:(TLPaddingModel *)paddingModel{
       CGFloat  dialogWidth = self.modeView.frame.size.width + 2*paddingModel.modePadding;
-    
 }
 
+/**
+ *  手动布局带有百分比的圆环进度条
+ *
+ *  @param paddingModel 布局对象
+ */
+-(void)layoutDeterminateCircular:(TLPaddingModel *)paddingModel{
+    [self LayoutIndeterminate:paddingModel];
+}
+
+/**
+ *  手动布局小个头的自定义转轮效果
+ *
+ *  @param paddingModel 布局对象
+ */
 -(void)layoutSmallIndicator:(TLPaddingModel *)paddingModel{
-    modeViewFrame = CGRectMake(10, y, paddingModel.dialogWidth-20, 5);
-    paddingBottom=15;
+    CGFloat height = (TLSmallIndicatorHeight-7*2);
+    CGFloat  y = TLSmallIndicatorHeight/2-height/2;
+    
+    //1.设置dialogView
+    CGRect innerRect;
+    CGSize innerSize = CGSizeMake(paddingModel.dialogMinWidth, TLSmallIndicatorHeight);
+    innerRect=TLCenterCGSizeInCGRect(innerSize, self.bounds);
+    self.dialogView.frame = innerRect;
+    
+    //2.设置modeView
+    CGRect modeViewFrame = CGRectMake(15, y, height, height);
+    self.modeView.frame=modeViewFrame;
+    
+    //3.设置标题
+    if(self.titlelb.text.length>0){
+        CGFloat originY=self.dialogView.frame.size.height/2 - TLTitleLbHeight/2;
+        self.titlelb.frame = CGRectMake(CGRectGetMaxX(self.modeView.frame), originY,self.dialogView.frame.size.width-height-modeViewFrame.origin.x, TLTitleLbHeight);
+    }
+}
+/**
+ *  手动布局自定义转轮效果
+ *
+ *  @param paddingModel 布局对象
+ */
+-(void)LayoutIndeterminate:(TLPaddingModel *)paddingModel{
+    //1.设置dialogView
+    CGRect innerRect;
+    CGSize innerSize = CGSizeMake(paddingModel.dialogMinWidth, paddingModel.dialogMinWidth);
+    innerRect=TLCenterCGSizeInCGRect(innerSize, self.bounds);
+    self.dialogView.frame = innerRect;
+    
+    //2.设置modeView
+    const CGFloat innerViewWidth = paddingModel.dialogMinWidth - 2*paddingModel.modePadding;
+    CGFloat  y = paddingModel.dialogMinWidth/2-innerViewWidth/2;
+    CGRect modeViewFrame = CGRectMake(paddingModel.modePadding, y, innerViewWidth, innerViewWidth);
+    self.modeView.frame=modeViewFrame;
+    
+    //3.设置标题
+    if(self.titlelb.text.length>0){
+        self.modeView.frame = CGRectOffset(self.modeView.frame, 0, 10);
+        self.titlelb.frame=CGRectMake(0, 10, self.dialogView.frame.size.width, 20);
+    }
 }
 
-self.modeView.frame=modeViewFrame;
+
+/**
+ *  手动布局系统默认进度条UIProgressView
+ *
+ *  @param paddingModel 布局对象
+ */
+-(void)layoutHorizontalBar:(TLPaddingModel*)paddingModel{
+    //1.设置dialogView
+    CGRect innerRect;
+    CGSize innerSize = CGSizeMake(paddingModel.dialogMinWidth,TLHorizontalBarHeight);
+    innerRect=TLCenterCGSizeInCGRect(innerSize, self.bounds);
+    self.dialogView.frame = innerRect;
+    
+    //2.设置modeView
+    const CGFloat innerViewWidth = paddingModel.dialogMinWidth - 2*paddingModel.modePadding;
+    CGFloat  y = paddingModel.dialogMinWidth/2-innerViewWidth/2;
+    self.modeView.frame = CGRectMake(10, y, paddingModel.dialogMinWidth-20, 5);
+    
+    self.modeView.backgroundColor=[UIColor redColor];
+    
+    //3.设置标题
+    if(self.titlelb.text.length>0){
+        self.modeView.frame = CGRectOffset(self.modeView.frame, 0, 10);
+        self.titlelb.frame=CGRectMake(0, 10, self.dialogView.frame.size.width, 20);
+    }
+}
+
+#pragma Utils
+
+static inline CGRect TLCenterCGSizeInCGRect(CGSize innerRectSize, CGRect outerRect) {
+    CGRect innerRect;
+    innerRect.size = innerRectSize;
+    innerRect.origin.x = outerRect.origin.x + (outerRect.size.width  - innerRectSize.width)  / 2.0f;
+    innerRect.origin.y = outerRect.origin.y + (outerRect.size.height - innerRectSize.height) / 2.0f;
+    return innerRect;
 }
 
 @end

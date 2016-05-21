@@ -1,1 +1,0 @@
-../../../../../TLProgressSpring/Classes/Category/UIImage+MRImageEffects.h

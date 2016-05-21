@@ -17,11 +17,11 @@
 @property CGFloat dialogMargin;
 @property CGFloat dialogMinWidth;
 
-@property CGFloat dialogWidth;
 
 -(id)initWithDialogPadding:(CGFloat)dialogPadding
                modePadding:(CGFloat)modePadding
               dialogMargin:(CGFloat)dialogMargin
-            dialogMinWidth:(CGFloat)dialogMinWidth;
+            dialogMinWidth:(CGFloat)dialogMinWidth
+             ;
 
 @end

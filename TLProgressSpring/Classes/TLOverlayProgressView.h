@@ -26,9 +26,14 @@ typedef  NS_ENUM(NSInteger,TLOverlayStyle){
      */
     TLOverlayStyleHorizontalBar,
     /**
-     *  显示一个小尺寸的activity indicator
+     *  显示一个小尺寸的TLAcitivityIndicator
      */
     TLOverlayStyleIndeterminateSmall,
+    
+    /**
+     *  显示苹果系统自带的UIActivityIndicator
+     */
+    TLOverlayStyleSystemUIActivity,
     /**
      *  显示一个对勾（正确）
      */
