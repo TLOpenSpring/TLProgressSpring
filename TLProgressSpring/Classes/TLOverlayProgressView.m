@@ -16,6 +16,7 @@
 #import "MRBlurView.h"
 
 #import "TLPaddingModel.h"
+#import "TLIconView.h"
 
 #define TLSmallIndicatorHeight 35
 #define TLTitleLbHeight 20
@@ -323,7 +324,16 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
             break;
         case TLOverlayStyleIcon:
             break;
-        case TLOverlayStyleCheckmark:
+        case TLOverlayStyleCheckmarkIcon:
+        {
+            progress = [self createCheckmarkView];
+        }
+            break;
+            
+        case TLOverlayStyleCrossIcon:
+        {
+          progress = [self createCrossIcon];
+        }
             break;
         case TLOverlayStyleHorizontalBar:
         {
@@ -345,6 +355,7 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
             progress = [self createCircleProgressView];
         }
             break;
+       
             
         default:
             break;
@@ -551,6 +562,16 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     return smallActivityView;
 }
 
+-(TLIconView *)createCheckmarkView{
+    TLCheckMarkIconView *checkMark = [[TLCheckMarkIconView alloc]init];
+    return checkMark;
+}
+
+-(TLIconView *)createCrossIcon{
+    TLCrossIconView *crossIcon = [[TLCrossIconView alloc]init];
+    return crossIcon;
+}
+
 /**
  *  创建系统默认的转轮
  *
@@ -635,6 +656,9 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
         [self layoutDeterminateCircular:paddingModel];
     }else if(self.overlayStyle == TLOverlayStyleSystemUIActivity){
         [self layoutSmallIndicator:paddingModel];
+    }else if(self.overlayStyle == TLOverlayStyleCheckmarkIcon||
+             self.overlayStyle == TLOverlayStyleCrossIcon){
+        [self layoutIconView:paddingModel];
     }
     else if(self.overlayStyle == TLOverlayStyleCustom){
         [self layoutStyleCustom:paddingModel];
@@ -690,6 +714,15 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
         CGFloat originY=self.dialogView.frame.size.height/2 - TLTitleLbHeight/2;
         self.titlelb.frame = CGRectMake(CGRectGetMaxX(self.modeView.frame), originY,self.dialogView.frame.size.width-height-modeViewFrame.origin.x, TLTitleLbHeight);
     }
+}
+/**
+ *  手动布局icon，比如checkMark,CrossIcon
+    如果想自定义布局，可以修改这个类，目前是引用Indeterminate的布局
+ *
+ *  @param paddingModel 布局对象
+ */
+-(void)layoutIconView:(TLPaddingModel *)paddingModel{
+    [self LayoutIndeterminate:paddingModel];
 }
 /**
  *  手动布局自定义转轮效果

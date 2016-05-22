@@ -21,10 +21,9 @@
 -(void)viewDidLoad{
     [super viewDidLoad];
     
-    
     _arrayData=@[@"显示普通转轮",
-                 @"TLOverlayStyleIcon",
-                 @"TLOverlayStyleCheckmark",
+                 @"显示失败图标",
+                 @"显示成功图标",
                  @"TLOverlayStyleHorizontalBar",
                  @"TLOverlayStyleIndeterminateSmall",
                  @"TLOverlayStyleDeterminateCircular",
@@ -71,16 +70,19 @@
         case 0:
         {
             style=TLOverlayStyleIndeterminate;
-            [self onShowProgress1];
+            [self onShowProgress0];
         }
             break;
             
         case 1:
-            style=TLOverlayStyleIcon;
-             [self onShowProgress4:style];
+            style=TLOverlayStyleCrossIcon;
+            [self onShowProgress1];
             break;
         case 2:
-            style=TLOverlayStyleCheckmark;
+        {
+            style=TLOverlayStyleCheckmarkIcon;
+            [self onShowProgress2];
+        }
             break;
         case 3:
             style=TLOverlayStyleHorizontalBar;
@@ -103,6 +105,7 @@
             style=TLOverlayStyleSystemUIActivity;
             [self onShowProgress7];
             break;
+    
 
         default:
         {
@@ -131,7 +134,7 @@
 }
 
 
--(void)onShowProgress1{
+-(void)onShowProgress0{
     TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
                                               showOverlayAddTo:self.view
                                               title:nil
@@ -146,17 +149,27 @@
     } afterDelay:2.0];
 }
 
--(void)onShowProgress2{
-    TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
-                                              showOverlayAddTo:self.view
-                                              title:@""
-                                              style:TLOverlayStyleHorizontalBar
-                                              animated:YES];
-    overLayProgress.isShowPercent=YES;
-    [overLayProgress showAnimated:YES];
-    [self simulateProgress:overLayProgress];
+-(void)onShowProgress1{
+    TLOverlayProgressView *overlayProgress=[TLOverlayProgressView showOverlayAddTo:[self rootView] title:@"Failier" style:TLOverlayStyleCrossIcon animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+        [progressView hideAnimated:YES];
+    }];
     
-   
+    [overlayProgress showAnimated:YES];
+    [self performBlock:^{
+        [overlayProgress dismiss:YES];
+    } afterDelay:2.0];
+    
+}
+-(void)onShowProgress2{
+    TLOverlayProgressView *overlayProgress=[TLOverlayProgressView showOverlayAddTo:[self rootView] title:@"Success" style:TLOverlayStyleCheckmarkIcon animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+        [progressView hideAnimated:YES];
+    }];
+    
+    [overlayProgress showAnimated:YES];
+    [self performBlock:^{
+        [overlayProgress dismiss:YES];
+    } afterDelay:2.0];
+    
 }
 
 -(void)onShowProgress3{
@@ -199,6 +212,8 @@
         [overLayProgress dismiss:YES];
     } afterDelay:2.0];
 }
+
+
 
 
 -(void)onShowProgress4:(TLOverlayStyle )style{

@@ -37,7 +37,9 @@ typedef  NS_ENUM(NSInteger,TLOverlayStyle){
     /**
      *  显示一个对勾（正确）
      */
-    TLOverlayStyleCheckmark,
+    TLOverlayStyleCheckmarkIcon,
+    
+    TLOverlayStyleCrossIcon,
     /**
      *  显示一个图标
      */
