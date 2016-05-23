@@ -136,7 +136,7 @@
 
 -(void)onShowProgress0{
     TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
-                                              showOverlayAddTo:self.view
+                                              showOverlayAddTo:[self rootView]
                                               title:nil
                                               style:TLOverlayStyleIndeterminate
                                               animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
@@ -182,7 +182,6 @@
     [overLayProgress showAnimated:YES];
     [self simulateProgress:overLayProgress];
     
-    
 }
 
 -(void)onShowProgress6{
@@ -219,7 +218,7 @@
 -(void)onShowProgress4:(TLOverlayStyle )style{
     TLOverlayProgressView *progress = [TLOverlayProgressView showOverlayAddTo:self.view
                                                                         title:@"loading..."
-                                                                        style:style
+                                                                        style:TLOverlayStyleIndeterminateSmall
                                                                      animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
                                                                          
                                                                          [progressView dismiss:YES];

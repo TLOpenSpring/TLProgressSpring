@@ -29,7 +29,6 @@
     _activityIndicatorView = [[TLActivityIndicatorView alloc]initWithFrame:CGRectMake(100, 100, 100, 100)];
     [self.view addSubview:_activityIndicatorView];
     _activityIndicatorView.animatorDuration = 0.8;
-   //_activityIndicatorView.tintColor=[UIColor groupTableViewBackgroundColor];
     [_activityIndicatorView startAnimating];
     
     UILabel *tiplb=[[UILabel alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(_activityIndicatorView.frame)+30, SCREEN_WIDTH, 20)];
