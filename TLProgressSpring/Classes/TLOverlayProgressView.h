@@ -44,6 +44,9 @@ typedef  NS_ENUM(NSInteger,TLOverlayStyle){
      *  显示一个图标
      */
     TLOverlayStyleIcon,
+    
+    //显示一些提示文字
+     TLOverlayStyleText,
     /**
      *  显示一个自定义的View
      */

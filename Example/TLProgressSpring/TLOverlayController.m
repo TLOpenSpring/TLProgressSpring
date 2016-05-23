@@ -25,10 +25,12 @@
                  @"显示失败图标",
                  @"显示成功图标",
                  @"TLOverlayStyleHorizontalBar",
-                 @"TLOverlayStyleIndeterminateSmall",
+                 @"显示小转轮带有文字",
                  @"TLOverlayStyleDeterminateCircular",
                  @"带有文字的转轮",
-                 @"TLOverlayStyleSystemUIActivity"];
+                 @"TLOverlayStyleSystemUIActivity",
+                 @"显示小转轮不带文字",
+                 @"显示提示框"];
     [self initTable];
 }
 
@@ -105,8 +107,12 @@
             style=TLOverlayStyleSystemUIActivity;
             [self onShowProgress7];
             break;
-    
-
+        case 8:
+            [self onShowProgress8];
+            break;
+        case 9:
+            [self onShowProgress9];
+            break;
         default:
         {
             style=TLOverlayStyleIndeterminate;
@@ -211,7 +217,38 @@
         [overLayProgress dismiss:YES];
     } afterDelay:2.0];
 }
-
+/**
+ *  显示小转轮，没有文字
+ */
+-(void)onShowProgress8{
+    TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
+                                              showOverlayAddTo:self.view
+                                              title:@""
+                                              style:TLOverlayStyleIndeterminateSmall
+                                              animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+                                                  [progressView hideAnimated:YES];
+                                              }];
+    [overLayProgress showAnimated:YES];
+    [self performBlock:^{
+        [overLayProgress dismiss:YES];
+    } afterDelay:2.0];
+}
+/**
+ *  显示提示框
+ */
+-(void)onShowProgress9{
+    TLOverlayProgressView *overLayProgress = [TLOverlayProgressView
+                                              showOverlayAddTo:self.view
+                                              title:@"操作成功！"
+                                              style:TLOverlayStyleText
+                                              animated:YES stopBlock:^(TLOverlayProgressView *progressView) {
+                                                  [progressView hideAnimated:YES];
+                                              }];
+    [overLayProgress showAnimated:YES];
+    [self performBlock:^{
+        [overLayProgress dismiss:YES];
+    } afterDelay:2.0];
+}
 
 
 

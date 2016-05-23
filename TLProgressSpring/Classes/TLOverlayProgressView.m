@@ -22,6 +22,8 @@
 #define TLTitleLbHeight 20
 #define TLHorizontalBarHeight 60
 
+#define TLTextTipHeight 60
+
 //ios8之后才支持模糊视图的UIVisualEffectView，所以要判断一下
 #if defined(TL_EnableUIVisualEffectView)
     #define TL_UIEffectViewIsEnabled 1
@@ -355,7 +357,11 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
             progress = [self createCircleProgressView];
         }
             break;
-       
+        case TLOverlayStyleText:
+        {
+            progress = [self createTextStyle];
+        }
+            break;
             
         default:
             break;
@@ -588,6 +594,10 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     TLCircleProgressView *circleProgress = [[TLCircleProgressView alloc]init];
     return circleProgress;
 }
+
+-(UIView *)createTextStyle{
+    return [UIView new];
+}
 /**
  *  创建水平进度条
  *
@@ -659,6 +669,8 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     }else if(self.overlayStyle == TLOverlayStyleCheckmarkIcon||
              self.overlayStyle == TLOverlayStyleCrossIcon){
         [self layoutIconView:paddingModel];
+    }else if(self.overlayStyle == TLOverlayStyleText){//如果是文字提示
+       [self layoutTextView:paddingModel];
     }
     else if(self.overlayStyle == TLOverlayStyleCustom){
         [self layoutStyleCustom:paddingModel];
@@ -713,6 +725,20 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     if(self.titlelb.text.length>0){
         CGFloat originY=self.dialogView.frame.size.height/2 - TLTitleLbHeight/2;
         self.titlelb.frame = CGRectMake(CGRectGetMaxX(self.modeView.frame), originY,self.dialogView.frame.size.width-height-modeViewFrame.origin.x, TLTitleLbHeight);
+    }else{
+      //如果没有标题，则重新布局，让dialogView尺寸变小，让modeView尺寸变小
+        //重置dialogView尺寸
+        CGRect smallFrame=self.dialogView.frame;
+        smallFrame.size=CGSizeMake(TLSmallIndicatorHeight, TLSmallIndicatorHeight);
+        CGFloat originX=self.superview.frame.size.width/2 -smallFrame.size.width/2;
+        smallFrame.origin.x=originX;
+        self.dialogView.frame=smallFrame;
+        
+        //重置modeView尺寸
+        smallFrame=self.modeView.frame;
+         originX=self.dialogView.frame.size.width/2 - smallFrame.size.width/2;
+        smallFrame.origin.x=originX;
+        self.modeView.frame=smallFrame;
     }
 }
 /**
@@ -773,6 +799,35 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     if(self.titlelb.text.length>0){
         self.modeView.frame = CGRectOffset(self.modeView.frame, 0, 10);
         self.titlelb.frame=CGRectMake(0, 10, self.dialogView.frame.size.width, 20);
+    }
+}
+/**
+ *  手动布局文字提示
+ *
+ *  @param paddingModel 布局对象
+ */
+-(void)layoutTextView:(TLPaddingModel*)paddingModel{
+    //1.设置dialogView
+    CGRect innerRect;
+    CGSize innerSize = CGSizeMake(paddingModel.dialogMinWidth,TLTextTipHeight);
+    innerRect=TLCenterCGSizeInCGRect(innerSize, self.bounds);
+    self.dialogView.frame = innerRect;
+    
+    //2.设置modeView
+    self.modeView.frame=self.dialogView.bounds;
+    
+    //3.设置标题
+    if(self.titlelb.text.length>0){
+        CGFloat gap=10;
+        CGFloat originY=0;
+        
+        self.titlelb.frame=CGRectMake(gap, gap, innerRect.size.width-gap*2, innerRect.size.height-gap*2);
+        [self.titlelb sizeToFit];
+        
+        originY=self.superview.frame.size.height/2 - (self.titlelb.frame.size.height+gap*2)/2;
+        
+        self.dialogView.frame=CGRectMake(self.dialogView.frame.origin.x, originY, self.titlelb.frame.size.width+gap*2, self.titlelb.frame.size.height+gap*2);
+        self.modeView.frame=self.dialogView.bounds;
     }
 }
 

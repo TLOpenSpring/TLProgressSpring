@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "TLProgressSpring"
-  s.version          = "1.0.0"
+  s.version          = "1.0.1"
   s.summary          = "一款进度条工具类，可以在导航栏上显示，也可以弹出一个转轮显示，用户随时可交互"
 
 # This description is used to generate tags and improve search results.
