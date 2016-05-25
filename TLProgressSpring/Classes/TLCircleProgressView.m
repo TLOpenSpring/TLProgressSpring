@@ -59,7 +59,9 @@ static NSString *const TLCircularProgressViewProgressAnimationKey = @"TLCircular
     valueLb.textAlignment=NSTextAlignmentCenter;
     [self addSubview:valueLb];
     
-    self.stopButton = [[TLStopButton alloc]init];
+    self.stopButton = [[TLStopButton alloc]initWithCompletionBlock:^(BOOL flag) {
+        [self stopAnimation];
+    }];
     self.mayStop = NO;
     self.progress = 0;
     

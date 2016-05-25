@@ -112,7 +112,6 @@ static CGFloat const TLStopButtonSize = 44.0;
     }
     
     self.shapeLayer.frame = frame;
-    
 }
 
 -(void)tintColorDidChange{

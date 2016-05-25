@@ -12,6 +12,7 @@
 #import "TLCircleProgressController.h"
 #import "TLActivityIndicatorController.h"
 #import "TLOverlayController.h"
+#import "TLNetworkController.h"
 
 @interface TLViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -73,6 +74,12 @@
         {
             TLNavController *navController = [[TLNavController alloc]init];
             [self.navigationController pushViewController:navController animated:YES];
+        }
+            break;
+        case 1:
+        {
+            TLNetworkController *networkVc=[[TLNetworkController alloc]init];
+            [self.navigationController pushViewController:networkVc animated:YES];
         }
             break;
         case 2:

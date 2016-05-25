@@ -612,6 +612,12 @@ static void *TLProgressOverlayViewObservationContext = &TLProgressOverlayViewObs
     return [UIView new];
 }
 
+#pragma mark
+#pragma mark - Stop Button
+-(void)setTlStopOverlayBlock:(TLStopOverlayBlock)tlStopOverlayBlock{
+    _tlStopOverlayBlock = tlStopOverlayBlock;
+}
+
 #pragma mark Tint Color
 -(void)setTintColor:(UIColor *)tintColor{
     super.tintColor = tintColor;
