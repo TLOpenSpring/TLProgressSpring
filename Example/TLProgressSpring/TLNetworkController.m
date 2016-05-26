@@ -11,6 +11,7 @@
 #import <TLProgressSpring/TLActivityIndicatorView.h>
 #import <TLProgressSpring/TLCircleProgressView.h>
 #import <TLProgressSpring/TLNavBarProgressView.h>
+#import <TLProgressSpring/TLOverlayProgressView.h>
 #import <TLProgressSpring/TLOverlayProgressView+AFNetworking.h>
 #import <TLProgressSpring/TLProgressView+AFNetworking.h>
 #import <TLProgressSpring/TLActivityIndicatorView+AFNetworking.h>
@@ -62,7 +63,12 @@
         [self.view addSubview:_activityIndictorView];
     }
     
-  NSURLSessionDataTask * task = [self.sessionManager GET:@"/delay/3" parameters:nil progress:nil success:nil failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+  NSURLSessionDataTask * task = [self.sessionManager
+                                 GET:@"/delay/3"
+                                 parameters:nil
+                                 progress:nil
+                                 success:nil
+                                 failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
       NSLog(@"Task %@ failed with error: %@", task, error);
 
   }];
@@ -83,6 +89,30 @@
     [btn2 addTarget:self action:@selector(showActivityIndicator:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn2];
     
+    rect =CGRectMake(10, CGRectGetMaxY(btn2.frame)+10, 250, 40);
+    UIButton *btn3=[self createBtn:rect title:@"网络请求-圆环进度条"];
+    [btn3 addTarget:self action:@selector(showCirlceProgress) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn3];
+    
+    rect =CGRectMake(10, CGRectGetMaxY(btn3.frame)+10, 250, 40);
+    UIButton *btn4=[self createBtn:rect title:@"网络请求-遮罩层进度条-默认"];
+    btn4.tag=0;
+    [btn4 addTarget:self action:@selector(showOverlayProgress:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn4];
+    
+    
+    rect =CGRectMake(10, CGRectGetMaxY(btn4.frame)+10, 250, 40);
+    UIButton *btn5=[self createBtn:rect title:@"网络请求-遮罩层进度条-圆环"];
+    btn5.tag=1;
+    [btn5 addTarget:self action:@selector(showOverlayProgress:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn5];
+    
+    rect =CGRectMake(10, CGRectGetMaxY(btn5.frame)+10, 250, 40);
+    UIButton *btn6=[self createBtn:rect title:@"网络请求-遮罩层进度条-水平"];
+    btn6.tag=2;
+    [btn6 addTarget:self action:@selector(showOverlayProgress:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn6];
+    
     
    
     
@@ -93,7 +123,9 @@
     UIButton *btn=[[UIButton alloc]initWithFrame:rect];
     [btn setTitle:title forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    btn.titleLabel.font=[UIFont systemFontOfSize:15];
     btn.backgroundColor=[UIColor groupTableViewBackgroundColor];
+    btn.showsTouchWhenHighlighted=YES;
     return btn;
 }
 
@@ -102,6 +134,36 @@
    self.navBarProgressView = [TLNavBarProgressView progressViewforNavigationController:self.navigationController];
     [_navBarProgressView setProgressWithDownloadProgressOfTask:task animated:YES];
     
+}
+
+-(void)showCirlceProgress{
+    NSURLSessionDownloadTask *task = [self bytesDownloadTask];
+    if(!_circleProgressView){
+        _circleProgressView=[[TLCircleProgressView alloc]initWithFrame:CGRectMake(10, SCREEN_HEIGHT-120, 100, 100)];
+        [self.view addSubview:_circleProgressView];
+    }
+    _circleProgressView.progress=0;
+    
+    [_circleProgressView setProgressWithDownloadProgressOfTask:task animated:YES];
+}
+
+-(void)showOverlayProgress:(UIButton*)btn
+{
+    TLOverlayStyle style=TLOverlayStyleIndeterminate;
+    if(btn.tag==1){
+        style = TLOverlayStyleDeterminateCircular;
+    }else if(btn.tag == 2){
+        style= TLOverlayStyleHorizontalBar;
+    }
+    
+    
+    NSURLSessionDownloadTask*task = [self bytesDownloadTask];
+    
+    TLOverlayProgressView *overlayView=[TLOverlayProgressView showOverlayAddTo:self.view title:@"loading..." style:style animated:YES];
+    
+    [overlayView setModeAndProgressWithStateOfTask:task];
+    
+    [overlayView setStopBlockForTask:task];
 }
 
 @end

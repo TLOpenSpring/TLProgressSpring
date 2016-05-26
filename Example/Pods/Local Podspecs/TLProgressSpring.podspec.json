@@ -15,5 +15,10 @@
   "platforms": {
     "ios": "8.0"
   },
-  "source_files": "TLProgressSpring/Classes/**/*"
+  "source_files": "TLProgressSpring/Classes/**/*",
+  "dependencies": {
+    "AFNetworking": [
+
+    ]
+  }
 }

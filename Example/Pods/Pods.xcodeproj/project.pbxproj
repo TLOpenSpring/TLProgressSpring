@@ -363,7 +363,9 @@
 			<key>buildRules</key>
 			<array/>
 			<key>dependencies</key>
-			<array/>
+			<array>
+				<string>D8D17ED9B1F59C8E50D351627946222A</string>
+			</array>
 			<key>isa</key>
 			<string>PBXNativeTarget</string>
 			<key>name</key>
@@ -8149,6 +8151,17 @@
 				</array>
 			</dict>
 		</dict>
+		<key>D8D17ED9B1F59C8E50D351627946222A</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>name</key>
+			<string>AFNetworking</string>
+			<key>target</key>
+			<string>928353533005A4198EBDA5B700D37B64</string>
+			<key>targetProxy</key>
+			<string>E03DCB19419B6ABB92D28251E03EC324</string>
+		</dict>
 		<key>D915F1A57B8FEF3F814F62FF2DB6B079</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -8388,6 +8401,19 @@
 			<string>7CA7D693B7248BB445A80B9673A4F3A7</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
+		</dict>
+		<key>E03DCB19419B6ABB92D28251E03EC324</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>D41D8CD98F00B204E9800998ECF8427E</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>928353533005A4198EBDA5B700D37B64</string>
+			<key>remoteInfo</key>
+			<string>AFNetworking</string>
 		</dict>
 		<key>E0551435FBBE37B3AA0CC10A4A14DED9</key>
 		<dict>

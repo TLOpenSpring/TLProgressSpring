@@ -88,6 +88,7 @@ static void * TLTaskCountOfBytesReceivedContext = &TLTaskCountOfBytesReceivedCon
     [center removeObserver:self name:AFNetworkingTaskDidCompleteNotification object:nil];
     
     @try {
+        
         [self.sessionTask removeObserver:self forKeyPath:NSStringFromSelector(@selector(countOfBytesSent))];
         
         [self.sessionTask removeObserver:self forKeyPath:NSStringFromSelector(@selector(countOfBytesReceived))];
@@ -172,6 +173,8 @@ static void * TLTaskCountOfBytesReceivedContext = &TLTaskCountOfBytesReceivedCon
         }else if([keyPath isEqualToString:NSStringFromSelector(@selector(countOfBytesReceived))]){
             if([object countOfBytesExpectedToReceive]>0){
                 [self tl_showDownloading];
+               
+                
                 @try {
                     [object removeObserver:self forKeyPath:NSStringFromSelector(@selector(countOfBytesReceived))];
                 } @catch (NSException *exception) {
@@ -196,7 +199,10 @@ static void * TLTaskCountOfBytesReceivedContext = &TLTaskCountOfBytesReceivedCon
     dispatch_async(dispatch_get_main_queue(), ^{
         self.titlelb.text=@"uploading...";
         
-        self.overlayStyle = TLOverlayStyleDeterminateCircular;
+        if(self.overlayStyle !=TLOverlayStyleDeterminateCircular &&
+           self.overlayStyle != TLOverlayStyleHorizontalBar){
+            self.overlayStyle = TLOverlayStyleDeterminateCircular;
+        }
         
         [(TLProgressView*)self.modeView setProgressWithUploadProgressOfTask:(NSURLSessionUploadTask*)self.sessionTask animated:YES];
     });
@@ -205,7 +211,11 @@ static void * TLTaskCountOfBytesReceivedContext = &TLTaskCountOfBytesReceivedCon
 -(void)tl_showDownloading{
     dispatch_async(dispatch_get_main_queue(), ^{
         self.titlelb.text=@"downloading...";
-        self.overlayStyle = TLOverlayStyleDeterminateCircular;
+      
+        if(self.overlayStyle !=TLOverlayStyleDeterminateCircular &&
+           self.overlayStyle != TLOverlayStyleHorizontalBar){
+           self.overlayStyle = TLOverlayStyleDeterminateCircular;
+        }
         [(TLProgressView*)self.modeView setProgressWithDownloadProgressOfTask:(NSURLSessionDownloadTask*)self.sessionTask animated:YES];
     });
 }

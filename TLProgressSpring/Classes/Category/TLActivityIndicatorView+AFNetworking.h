@@ -18,5 +18,5 @@
  *
  *  @param task 任务
  */
--(void)setAnimatingWithStateOfTask:(NSURLSessionTask *)task;
+- (void)setAnimatingWithStateOfTask:(NSURLSessionTask *)task;
 @end

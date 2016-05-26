@@ -29,9 +29,11 @@
         observer = [[AFActivityIndicatorViewNotificationObserver alloc]initWithActivityIndicatorView:(UIActivityIndicatorView*)self];
         objc_setAssociatedObject(self, @selector(TL_notificationObserver), observer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
+    
+    return observer;
 }
 
--(void)setAnimatingWithStateOfTask:(NSURLSessionTask *)task{
+- (void)setAnimatingWithStateOfTask:(NSURLSessionTask *)task{
     [[self TL_notificationObserver] setAnimatingWithStateOfTask:task];
 }
 

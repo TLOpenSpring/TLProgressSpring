@@ -26,7 +26,7 @@ static NSString *const TLCircularProgressViewProgressAnimationKey = @"TLCircular
 {
     [self.appearance setAnimationDuration:0.3];
     [self.appearance setBorderWidth:2.0];
-    [self.appearance setLineWidth:1.0];
+    [self.appearance setLineWidth:2.0];
 }
 
 -(instancetype)initWithFrame:(CGRect)frame{
